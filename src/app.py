@@ -15,6 +15,12 @@ def retrieve_secret(secret_name):
     )
     return response
 
+def list_secrets():
+    response = client.list_secrets()
+    return [secret['Name'] for secret in response['SecretList']]
+
+print(list_secrets(), "<<<<<<<<<")
+
 # pprint(retrieve_secret()['SecretString'])
 
 #create_secret("examplesecret7","user_id7","password7")
@@ -31,13 +37,17 @@ def main():
         elif response =='r':
             secret_name = input('Specify secret to retrieve:\n')
             secret = retrieve_secret(secret_name)['SecretString']
+            secret_dict = json.loads(secret)
+            print(secret_dict['user_id'])
             with open(f'{secret_name}-secret.txt', 'w') as file:
-                file.write(secret)
+                file.write(f'UserId: {secret_dict["user_id"]}\nPassword: {secret_dict["password"]}')
             print(f'Secret stored in local file {secret_name}-secret.txt')
         elif response == 'd':
             print('deleted')
         elif response == 'l':
-            print('list')
+            secrets_list = list_secrets()
+            print(f'{len(secrets_list)} secret(s) available')
+            print(secrets_list)
         elif response == 'x':
             print('Godbye')
             break 
