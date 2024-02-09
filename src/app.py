@@ -22,11 +22,10 @@ def list_secrets():
     response = client.list_secrets()
     return [secret['Name'] for secret in response['SecretList']]
 
+def delete_secret(secret_name):
+    response=client.delete_secret(SecretId= secret_name)
 
 
-# pprint(retrieve_secret()['SecretString'])
-
-#create_secret("examplesecret7","user_id7","password7")
 
 def main():
     while True:
@@ -47,19 +46,24 @@ def main():
                     file.write(f'UserId: {secret_dict["user_id"]}\nPassword: {secret_dict["password"]}')
                 print(f'Secret stored in local file {secret_name}-secret.txt')
             else:
-                print('Secret does not exits')
+                print('Secret does not exist')
         elif response == 'd':
-            print('deleted')
+            secrets_list = list_secrets()
+            secret_name=input('Specify the secret to delete:\n')
+            if secret_name in secrets_list:
+                delete_secret(secret_name)
+                print('Deleted')
+            else:
+                print('Secret does not exist')
         elif response == 'l':
             secrets_list = list_secrets()
             print(f'{len(secrets_list)} secret(s) available')
             for item in secrets_list :print(item)
-            # print(secrets_list)
         elif response == 'x':
-            print('Godbye')
+            print('Thank you. Goodbye.')
             break 
         else:
-            response=input('invalid input. Please specify [e]ntry, [r]etrieval, [d]eletion, [l]isting or e[x]it\n')
+            response=input('Invalid input. Please specify [e]ntry, [r]etrieval, [d]eletion, [l]isting or e[x]it\n')
             
 
 main()
