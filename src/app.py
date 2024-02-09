@@ -47,7 +47,8 @@ def main():
         elif response == 'l':
             secrets_list = list_secrets()
             print(f'{len(secrets_list)} secret(s) available')
-            print(secrets_list)
+            for item in secrets_list :print(item)
+            # print(secrets_list)
         elif response == 'x':
             print('Godbye')
             break 
