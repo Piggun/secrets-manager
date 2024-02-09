@@ -1,8 +1,11 @@
 import boto3
 from pprint import pprint
 import json
-client= boto3.client('secretsmanager')
+import os
+path = os.path.dirname(__file__)
 
+client= boto3.client('secretsmanager')
+print(path)
 def create_secret(secret_name,user_id,password):
     response = client.create_secret(
         Name= secret_name,
@@ -19,7 +22,7 @@ def list_secrets():
     response = client.list_secrets()
     return [secret['Name'] for secret in response['SecretList']]
 
-print(list_secrets(), "<<<<<<<<<")
+
 
 # pprint(retrieve_secret()['SecretString'])
 
@@ -35,13 +38,16 @@ def main():
             create_secret(secret_identifier,user_id,password)
             print('Secret has been saved')
         elif response =='r':
+            secrets_list = list_secrets()
             secret_name = input('Specify secret to retrieve:\n')
-            secret = retrieve_secret(secret_name)['SecretString']
-            secret_dict = json.loads(secret)
-            print(secret_dict['user_id'])
-            with open(f'{secret_name}-secret.txt', 'w') as file:
-                file.write(f'UserId: {secret_dict["user_id"]}\nPassword: {secret_dict["password"]}')
-            print(f'Secret stored in local file {secret_name}-secret.txt')
+            if secret_name in secrets_list:
+                secret = retrieve_secret(secret_name)['SecretString']
+                secret_dict = json.loads(secret)
+                with open(f'{path}/../{secret_name}-secret.txt', 'w') as file:
+                    file.write(f'UserId: {secret_dict["user_id"]}\nPassword: {secret_dict["password"]}')
+                print(f'Secret stored in local file {secret_name}-secret.txt')
+            else:
+                print('Secret does not exits')
         elif response == 'd':
             print('deleted')
         elif response == 'l':
